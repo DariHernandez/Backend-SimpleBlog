@@ -5,6 +5,6 @@ app_name = 'blog'
 
 urlpatterns = [
     #Post views
-    path ('', views.post_list, name = "post_list") #home/index
-    path ('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name = "post_detail") #another url with vars
+    path ('', views.post_list, name = 'post_list'),  #home/index
+    path ('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name = 'post_detail') #another url with vars
 ]
