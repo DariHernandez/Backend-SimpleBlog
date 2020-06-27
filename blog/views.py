@@ -1,8 +1,20 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def post_list (request):
-    posts = Post.published.all() #Query-
+    object_list = Post.published.all()
+    paginator = Paginator(object_list, 3) #Three post en each page
+    page = request.GET.get('page')
+    try: 
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        #IF the page is not an integer, deliver the frist page
+        posts = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range deliver last page of results
+        posts = paginator.page(paginator.num_pages)
+
     context = {'posts':posts}
     return render(request, 'blog/post/list.html', context) # takes the request object, the emplate path, and the context variables to render the given template
 

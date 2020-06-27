@@ -15,4 +15,5 @@
         </p>
         {{ post.body|truncatewords:30|linebreaks }} <!-- truncatewords truncates the value to the number of words specified, and linebreaks converts the output into HTML line breaks.-->
     {% endfor %}
+    {% include "pagination.html" with page=posts %}
 {% endblock %}
