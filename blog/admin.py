@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin): #Class who  include information about how to display the model in the site and how to interact with it.
@@ -10,3 +10,9 @@ class PostAdmin(admin.ModelAdmin): #Class who  include information about how to 
     raw_id_fields = ('author',) #hows a magnifying glass button next to the field which allows users to search for and select a value:
     date_hierarchy = 'publish' #Crete a herarcy/date filter
     ordering = ('status', 'publish') #Order
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('name','email','post','created','active')
+    list_filter = ('active','created','updated')
+    search_fields = ('name','email','body')

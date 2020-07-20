@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 
 def post_share(request, post_id):
@@ -44,8 +44,28 @@ def post_list (request):
     return render(request, 'blog/post/list.html', context) # takes the request object, the emplate path, and the context variables to render the given template
 
 def post_detail(request, year, month, day, post): #retrieves the object that matches the given arameters or an HTTP 404 (not found) exception if no object is found. 
-    post = get_object_or_404(Post, slug=post, status='published', publish__year = year, publish__month = month, publish__day = day) 
-    context = {'post':post}
+    post = get_object_or_404(Post, 
+                            slug=post, status='published', 
+                            publish__year = year, 
+                            publish__month = month, 
+                            publish__day = day) 
+
+    comments = post.comments.filter(active=True)
+
+    new_comment = None
+
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    context = {'post':post, 
+                'comments':comments, 
+                'new_comments':new_comment, 
+                'comment_form':comment_form}
     return render(request, 'blog/post/detail.html', context)
 
 class PostListView(ListView): 
